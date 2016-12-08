@@ -1,5 +1,7 @@
 # ZXing C++ Port
 
+[![Build Status](https://travis-ci.org/glassechidna/zxing-cpp.svg?branch=master)](https://travis-ci.org/glassechidna/zxing-cpp)
+
 [ZXing](https://github.com/zxing/zxing) is/was a Java library.
 
 At some point a complete C++ port/rewrite was created and maintained in the official [ZXing](https://github.com/zxing/zxing) repo. However, at the time of writing the C++ port is no longer maintained and has been removed from the official ZXing repo.
@@ -36,6 +38,10 @@ You can switch between build modes by specifying:
   - `-DCMAKE_BUILD_TYPE=Debug` or
   - `-DCMAKE_BUILD_TYPE=Release`
 
+# OpenCV integration
+
+When build on a system where opencv is installed the open cv bridge classes and executable will be built too.
+
 # Development tips
 
 To profile the code (very useful to optimize the code):
@@ -43,9 +49,3 @@ To profile the code (very useful to optimize the code):
   1. Install Valgrind
   2. Run `valgrind --tool=callgrind build/zxing - path/to/test/data/*.jpg > report.html`
   3. Analyze output using KCachegrind
-
-To run the black box tests and check for changes:
-
-  1. Build `zxing-img`, e.g., scons zxing
-  2. Run the tests: `bash blackboxtest.sh 2>&1 | tee bb.results`
-  3. Diff them with the known results: `diff bb.results blackboxtest.results`
