@@ -29,7 +29,11 @@ private:
   char convertPixel(const char* pixel) const;
 
 public:
-  static zxing::Ref<LuminanceSource> create(std::string const& filename);
+  // deleted by yuanyuanxiang
+  // static zxing::Ref<LuminanceSource> create(std::string const& filename);
+
+  // added by yuanyuanxiang
+  static zxing::Ref<LuminanceSource> create(char* buffer, int width, int height, int comps);
 
   ImageReaderSource(zxing::ArrayRef<char> image, int width, int height, int comps);
 

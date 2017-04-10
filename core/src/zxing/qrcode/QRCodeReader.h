@@ -24,6 +24,7 @@
 #include <zxing/Reader.h>
 #include <zxing/qrcode/decoder/Decoder.h>
 #include <zxing/DecodeHints.h>
+#include "../common/PerspectiveTransform.h" // added by yuanyuanxiang
 
 namespace zxing {
 namespace qrcode {
@@ -31,8 +32,13 @@ namespace qrcode {
 class QRCodeReader : public Reader {
  private:
   Decoder decoder_;
-			
- protected:
+
+ public:
+  // added by yuanyuanxiang
+  float m_fModuleSize;
+  Ref<PerspectiveTransform> m_Transform;
+
+ public: // altered by yuanyuanxiang
   Decoder& getDecoder();
 
  public:

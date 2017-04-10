@@ -37,8 +37,27 @@ using zxing::Ref;
 using zxing::ArrayRef;
 using zxing::BitMatrix;
 
-Decoder::Decoder() :
-  rsDecoder_(GenericGF::QR_CODE_FIELD_256) {
+Decoder::Decoder() : rsDecoder_(GenericGF::QR_CODE_FIELD_256)
+{
+	// added by yuanyuanxiang
+	m_nLevel = 0;
+	m_nVersion = 1;
+	m_nMaskingNo = 0;
+}
+
+int Decoder::GetErrorCorrectLevel() const
+{
+	return m_nLevel;
+}
+
+int Decoder::GetQRCodeVersion() const
+{
+	return m_nVersion;
+}
+
+int Decoder::GetMaskingNo() const
+{
+	return m_nMaskingNo;
 }
 
 void Decoder::correctErrors(ArrayRef<char> codewordBytes, int numDataCodewords) {
@@ -70,6 +89,17 @@ Ref<DecoderResult> Decoder::decode(Ref<BitMatrix> bits) {
   Version *version = parser.readVersion();
   ErrorCorrectionLevel &ecLevel = parser.readFormatInformation()->getErrorCorrectionLevel();
 
+  // Get version, added by yuanyuanxiang
+  m_nVersion = version->getVersionNumber();
+  std::string ecLevelName = ecLevel.name();
+  if      (ecLevelName == "L")  { m_nLevel = 0; }
+  else if (ecLevelName == "M")  { m_nLevel = 1; }
+  else if (ecLevelName == "Q")  { m_nLevel = 2; }
+  else if (ecLevelName == "H")  { m_nLevel = 3; }
+
+  // Get maskingNo, added by yuanyuanxiang
+  Ref<FormatInformation> formatInfo = parser.readFormatInformation();
+  m_nMaskingNo = formatInfo->getDataMask();
 
   // Read codewords
   ArrayRef<char> codewords(parser.readCodewords());

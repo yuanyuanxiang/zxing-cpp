@@ -40,6 +40,11 @@ private:
   Ref<BitMatrix> image_;
   Ref<ResultPointCallback> callback_;
 
+  // Module size, added by yuanyuanxiang
+  float m_fModuleSize;
+  // Transform matrix, added by yuanyuanxiang
+  Ref<PerspectiveTransform> m_Transform;
+
 protected:
   Ref<BitMatrix> getImage() const;
   Ref<ResultPointCallback> getResultPointCallback() const;
@@ -61,7 +66,10 @@ public:
   Detector(Ref<BitMatrix> image);
   Ref<DetectorResult> detect(DecodeHints const& hints);
 
-
+  // Get module size, added by yuanyuanxiang
+  float GetModuleSize() const;
+  // Get transform matrix, added by yuanyuanxiang
+  Ref<PerspectiveTransform> GetTransform() const;
 };
 }
 }

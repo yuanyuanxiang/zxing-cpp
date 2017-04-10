@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
+#include "stdafx.h" // added by yuanyuanxiang
 #include "ImageReaderSource.h"
 #include <zxing/common/IllegalArgumentException.h>
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
 #include <algorithm>
-#include "lodepng.h"
-#include "jpgd.h"
+// comment by yuanyuanxiang
+// #include "lodepng.h"
+// #include "jpgd.h"
 
 using std::string;
 using std::ostringstream;
@@ -46,44 +48,15 @@ inline char ImageReaderSource::convertPixel(char const* pixel_) const {
 }
 
 ImageReaderSource::ImageReaderSource(ArrayRef<char> image_, int width, int height, int comps_)
-    : Super(width, height), image(image_), comps(comps_) {}
+	: Super(width, height), image(image_), comps(comps_) {}
 
-Ref<LuminanceSource> ImageReaderSource::create(string const& filename) {
-  string extension = filename.substr(filename.find_last_of(".") + 1);
-  std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-  int width, height;
-  int comps = 0;
-  zxing::ArrayRef<char> image;
-  if (extension == "png") {
-    std::vector<unsigned char> out;
+// added by yuanyuanxiang
+Ref<LuminanceSource> ImageReaderSource::create(char* buffer, int width, int height, int comps)
+{
+	zxing::ArrayRef<char> image;
+	image = zxing::ArrayRef<char>(buffer, 4 * width * height);
 
-    { unsigned w, h;
-      unsigned error = lodepng::decode(out, w, h, filename);
-      if (error) {
-        ostringstream msg;
-        msg << "Error while loading '" << lodepng_error_text(error) << "'";
-        throw zxing::IllegalArgumentException(msg.str().c_str());
-      }
-      width = w;
-      height = h;
-    }
-
-    comps = 4;
-    image = zxing::ArrayRef<char>(4 * width * height);
-    memcpy(&image[0], &out[0], image->size());
-  } else if (extension == "jpg" || extension == "jpeg") {
-    char *buffer = reinterpret_cast<char*>(jpgd::decompress_jpeg_image_from_file(
-        filename.c_str(), &width, &height, &comps, 4));
-    image = zxing::ArrayRef<char>(buffer, 4 * width * height);
-    free(buffer);
-  }
-  if (!image) {
-    ostringstream msg;
-    msg << "Loading \"" << filename << "\" failed.";
-    throw zxing::IllegalArgumentException(msg.str().c_str());
-  }
-
-  return Ref<LuminanceSource>(new ImageReaderSource(image, width, height, comps));
+	return Ref<LuminanceSource>(new ImageReaderSource(image, width, height, comps));
 }
 
 zxing::ArrayRef<char> ImageReaderSource::getRow(int y, zxing::ArrayRef<char> row) const {

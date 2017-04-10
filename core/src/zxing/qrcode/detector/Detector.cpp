@@ -52,7 +52,9 @@ using zxing::qrcode::FinderPatternInfo;
 using zxing::ResultPoint;
 
 Detector::Detector(Ref<BitMatrix> image) :
-  image_(image) {
+  image_(image)
+{
+	m_fModuleSize = 4.f;
 }
 
 Ref<BitMatrix> Detector::getImage() const {
@@ -61,6 +63,18 @@ Ref<BitMatrix> Detector::getImage() const {
 
 Ref<ResultPointCallback> Detector::getResultPointCallback() const {
   return callback_;
+}
+
+// added by yuanyuanxiang
+float Detector::GetModuleSize() const
+{
+	return m_fModuleSize;
+}
+
+// added by yuanyuanxiang
+Ref<PerspectiveTransform> Detector::GetTransform() const
+{
+	return m_Transform;
 }
 
 Ref<DetectorResult> Detector::detect(DecodeHints const& hints) {
@@ -75,11 +89,12 @@ Ref<DetectorResult> Detector::processFinderPatternInfo(Ref<FinderPatternInfo> in
   Ref<FinderPattern> topRight(info->getTopRight());
   Ref<FinderPattern> bottomLeft(info->getBottomLeft());
 
-  float moduleSize = calculateModuleSize(topLeft, topRight, bottomLeft);
-  if (moduleSize < 1.0f) {
+  // altered by yuanyuanxiang
+  m_fModuleSize = calculateModuleSize(topLeft, topRight, bottomLeft);
+  if (m_fModuleSize < 1.0f) {
     throw zxing::ReaderException("bad module size");
   }
-  int dimension = computeDimension(topLeft, topRight, bottomLeft, moduleSize);
+  int dimension = computeDimension(topLeft, topRight, bottomLeft, m_fModuleSize);
   Version *provisionalVersion = Version::getProvisionalVersionForDimension(dimension);
   int modulesBetweenFPCenters = provisionalVersion->getDimensionForVersion() - 7;
 
@@ -103,7 +118,7 @@ Ref<DetectorResult> Detector::processFinderPatternInfo(Ref<FinderPatternInfo> in
     // Kind of arbitrary -- expand search radius before giving up
     for (int i = 4; i <= 16; i <<= 1) {
       try {
-        alignmentPattern = findAlignmentInRegion(moduleSize, estAlignmentX, estAlignmentY, (float)i);
+        alignmentPattern = findAlignmentInRegion(m_fModuleSize, estAlignmentX, estAlignmentY, (float)i);
         break;
       } catch (zxing::ReaderException const& re) {
         (void)re;
@@ -115,9 +130,9 @@ Ref<DetectorResult> Detector::processFinderPatternInfo(Ref<FinderPatternInfo> in
     }
 
   }
-
-  Ref<PerspectiveTransform> transform = createTransform(topLeft, topRight, bottomLeft, alignmentPattern, dimension);
-  Ref<BitMatrix> bits(sampleGrid(image_, dimension, transform));
+  // altered by yuanyuanxiang
+  m_Transform = createTransform(topLeft, topRight, bottomLeft, alignmentPattern, dimension);
+  Ref<BitMatrix> bits(sampleGrid(image_, dimension, m_Transform));
   ArrayRef< Ref<ResultPoint> > points(new Array< Ref<ResultPoint> >(alignmentPattern == 0 ? 3 : 4));
   points[0].reset(bottomLeft);
   points[1].reset(topLeft);

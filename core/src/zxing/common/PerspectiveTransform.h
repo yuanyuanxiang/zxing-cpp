@@ -27,6 +27,7 @@ namespace zxing {
 class PerspectiveTransform : public Counted {
 private:
   float a11, a12, a13, a21, a22, a23, a31, a32, a33;
+  PerspectiveTransform();// by yuanyuanxiang
   PerspectiveTransform(float a11, float a21, float a31, float a12, float a22, float a32, float a13, float a23,
                        float a33);
 
@@ -43,6 +44,9 @@ public:
   void transformPoints(std::vector<float> &points);
 
   friend std::ostream& operator<<(std::ostream& out, const PerspectiveTransform &pt);
+
+  // »ñÈ¡Í¸ÊÓ¾ØÕó, by yuanyuanxiang
+  void GetPptMatrix(float ppt[9]);
 };
 }
 

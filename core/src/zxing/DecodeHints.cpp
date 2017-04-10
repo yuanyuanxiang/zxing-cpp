@@ -29,7 +29,8 @@ using zxing::DecodeHints;
 // VC++
 using zxing::BarcodeFormat;
 
-const DecodeHintType DecodeHints::CHARACTER_SET;
+// Fix fatal error LNK1169, by yuanyuanxiang
+// const DecodeHintType DecodeHints::CHARACTER_SET;
 
 const DecodeHints DecodeHints::PRODUCT_HINT(
   UPC_A_HINT |

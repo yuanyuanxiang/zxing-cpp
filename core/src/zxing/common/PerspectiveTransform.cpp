@@ -23,6 +23,12 @@
 namespace zxing {
 using namespace std;
 
+// by yuanyuanxiang
+PerspectiveTransform::PerspectiveTransform()
+{
+	memset(this, 0, sizeof(PerspectiveTransform));
+}
+
 PerspectiveTransform::PerspectiveTransform(float inA11, float inA21, 
                                            float inA31, float inA12, 
                                            float inA22, float inA32, 
@@ -30,6 +36,14 @@ PerspectiveTransform::PerspectiveTransform(float inA11, float inA21,
                                            float inA33) : 
   a11(inA11), a12(inA12), a13(inA13), a21(inA21), a22(inA22), a23(inA23),
   a31(inA31), a32(inA32), a33(inA33) {}
+
+  // ‘¨„‰œÈ ‘ˆº”
+void PerspectiveTransform::GetPptMatrix(float ppt[9])
+{
+	ppt[0] = a11; ppt[1] = a12; ppt[2] = a13;
+	ppt[3] = a21; ppt[4] = a22; ppt[5] = a23;
+	ppt[6] = a31; ppt[7] = a32; ppt[8] = a33;
+}
 
 Ref<PerspectiveTransform> PerspectiveTransform::quadrilateralToQuadrilateral(float x0, float y0, float x1, float y1,
     float x2, float y2, float x3, float y3, float x0p, float y0p, float x1p, float y1p, float x2p, float y2p,

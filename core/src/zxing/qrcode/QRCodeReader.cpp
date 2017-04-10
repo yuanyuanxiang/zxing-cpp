@@ -30,11 +30,19 @@ namespace zxing {
 		using namespace std;
 		
 		QRCodeReader::QRCodeReader() :decoder_() {
+			m_fModuleSize = 4.0f; // added by yuanyuanxiang
 		}
 		//TODO: see if any of the other files in the qrcode tree need tryHarder
 		Ref<Result> QRCodeReader::decode(Ref<BinaryBitmap> image, DecodeHints hints) {
 			Detector detector(image->getBlackMatrix());
 			Ref<DetectorResult> detectorResult(detector.detect(hints));
+
+			// Get module size, added by yuanyuanxiang
+			m_fModuleSize = detector.GetModuleSize();
+
+			// Get transform matrix, added by yuanyuanxiang
+			m_Transform = detector.GetTransform();
+
 			ArrayRef< Ref<ResultPoint> > points (detectorResult->getPoints());
 			Ref<DecoderResult> decoderResult(decoder_.decode(detectorResult->getBits()));
 			Ref<Result> result(

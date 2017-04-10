@@ -33,11 +33,29 @@ class Decoder {
 private:
   ReedSolomonDecoder rsDecoder_;
 
+  // EcLevel, added by yuanyuanxiang
+  int m_nLevel;
+
+  // Version, added by yuanyuanxiang
+  int m_nVersion;
+
+  // MaskingNo, added by yuanyuanxiang
+  int m_nMaskingNo;
+
   void correctErrors(ArrayRef<char> bytes, int numDataCodewords);
 
 public:
   Decoder();
   Ref<DecoderResult> decode(Ref<BitMatrix> bits);
+
+  // Get EcLevel, added by yuanyuanxiang
+  int GetErrorCorrectLevel() const;
+
+  // Get Version, added by yuanyuanxiang
+  int GetQRCodeVersion() const;
+
+  // Get MsakingNo, added by yuanyuanxiang
+  int GetMaskingNo() const;
 };
 
 }
